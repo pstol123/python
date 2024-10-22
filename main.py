@@ -27,7 +27,7 @@ def parse_day_range(parser: argparse.ArgumentParser, range_str: str) -> list[str
     """
     Parsuje zakresy dni tygodnia (tj. 'Mon-Wed', 'Fri', 'Tue-Fri', ...).
     Zwraca listę wszystkich dni tygodnia z zakresu.
-    Zgłasza wyjątek, jeśli zakres był niepoprawny.
+    Wypisuje błąd parsera i kończy program, jeśli zakres był niepoprawny.
     """
 
     days = range_str.split("-")
