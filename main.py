@@ -17,20 +17,24 @@ TIMES = {
     "m": "morning", "e": "evening"
 }
 
+#stałe do zapisu Dane.csv
+HEADLINE = ['Model', 'Wynik', 'Czas']
+VALUES_MODEL = ['A', 'B', 'C']
+VALUES_START = 0
+VALUES_FINISH = 1000
+
 def read_csv():
     pass
 
 def write_csv():
-    HEADLINE = 'Model;    Wynik;    Czas;'
-    VALUES_MODEL = ['A', 'B', 'C']
-    VALUES_START = 0
-    VALUES_FINISH = 1000
-    with open('Dane.csv', 'r', newline ='') as plik:
-        pisarz = csv.writer
+
+    with open('Dane.csv', 'w', newline ='') as plik:
+        pisarz = csv.writer(plik)
         model = random.choice(VALUES_MODEL)
-        wynik = randint(VALUES_START, VALUES_FINISH)
-        czas= randint(VALUES_START, VALUES_FINISH)
-        pisarz.write(
+        wynik = random.randint(VALUES_START, VALUES_FINISH)
+        czas= random.randint(VALUES_START, VALUES_FINISH)
+        pisarz.writerow(HEADLINE);
+        pisarz.write([model,wynik, czas])
 def parse_args():
     pass
 
@@ -123,6 +127,10 @@ def parse_args():
     return params
 
 if __name__ == '__main__':
+
+
     args = parse_args()
     print(args) # DEBUG
+    write_csv();
 
+    #my tests
