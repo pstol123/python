@@ -2,6 +2,7 @@ import argparse
 import csv
 import random
 from pathlib import Path
+import sys
 
 MONTHS = {
     "Jan": "January", "Feb": "February", "Mar": "March", "Apr": "April", "May": "May", "Jun": "June",
@@ -29,12 +30,24 @@ def read_csv(katalog: Path = ""):
     print(pom)
     with open(pom, 'r') as plik:
         czytelnik = csv.reader(plik)
-        next(czytelnik);
-        wiersz = next(czytelnik)
-        if(wiersz[0] == 'A'):
-            return wiersz[2]
-        else:
-            return 0;
+        j = 0
+        for wiersz in czytelnik:
+            j = j + 1
+            if(j == 2):
+                if(len(wiersz) < 3):
+                    print("Błąd odczytu", file=sys.stderr)
+                if (wiersz[0] == 'A'):
+                    try:
+                        wynik = int(wiersz[2])
+                    except (ValueError, TypeError):
+                        print("Błąd odczytu", file=sys.stderr)
+                        return 0
+                    return int(wiersz[2])
+                else:
+                    return 0
+        print("Błąd odczytu", file=sys.stderr)
+        return 0
+
 
 def read_all_csv():
     pass
@@ -151,7 +164,7 @@ if __name__ == '__main__':
 
     args = parse_args()
     print(args) # DEBUG
-    write_csv()
+    #write_csv()
     print(read_csv())
 
     #my tests
