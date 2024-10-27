@@ -24,19 +24,23 @@ VALUES_MODEL = ['A', 'B', 'C']
 VALUES_START = 0
 VALUES_FINISH = 1000
 
-#domyślny katalog odczytu to katalog wyjściowy
-#jeżeli Model != 'A' tp funkcja zwraca 0 (nie sumujemy Czasu)
-#w przeciwnym wypadku zwraca warotść czas
+#konweruje i sprawdza poprawność ścieżki
 def convert_path(katalog: Path = ""):
     katalog = Path(katalog)
     if (not katalog.is_dir()):
-        print("Błędna ścieżka", file=sys.stderr);
-        return;
-    pom = katalog / 'Dane.csv'
-    return pom;
+        print("Błędna ścieżka", file=sys.stderr)
+        return
+    return katalog
 
+#przygotowuje finalną ścieżkę do pliku
+def prepare_path(katalog: Path = ""):
+    return convert_path(katalog) / 'Dane.csv'
+
+#domyślny katalog odczytu to katalog, w którym znajduje sie plik
+#jeżeli Model != 'A' tp funkcja zwraca 0 (nie sumujemy Czasu)
+#w przeciwnym wypadku zwraca warotść czas
 def read_csv(katalog: Path = ""):
-    pom = convert_path(katalog);
+    pom = prepare_path(katalog)
     with open(pom, 'r') as plik:
         czytelnik = csv.reader(plik)
 
@@ -66,16 +70,16 @@ def read_csv(katalog: Path = ""):
         print("Błąd odczytu", file=sys.stderr)
         return 0
 
-
+#funkcja zakłada
 def read_all_csv():
     pass
 
 
 #tworzenie nowego pliku, wyznaczenie i wpisanie danych
 #katalog - ścieżka do katalogu, w którym tworzymy plik Dane.csv
-#domyślnie tworzymy plik w katalogu, w którym jesteśmy
+#domyślnie tworzymy plik w katalogu, w którym znajduje sie plik
 def write_csv(katalog: Path = ""):
-    pom = convert_path(katalog);
+    pom = prepare_path(katalog)
 
     # jeżeli plik Dane.csv już istnieje, to go nadpisujemy
     with open(pom, 'w', newline ='') as plik:
