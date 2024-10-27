@@ -3,6 +3,8 @@ import csv
 import random
 from pathlib import Path
 import sys
+import glob
+import os
 
 MONTHS = {
     "Jan": "January", "Feb": "February", "Mar": "March", "Apr": "April", "May": "May", "Jun": "June",
@@ -27,39 +29,38 @@ VALUES_FINISH = 1000
 #konweruje i sprawdza poprawność ścieżki
 def convert_path(katalog: Path = ""):
     katalog = Path(katalog)
-    if (not katalog.is_dir()):
+    if (not katalog.is_dir() or not katalog.exists()):
         print("Błędna ścieżka", file=sys.stderr)
         return
     return katalog
 
 #przygotowuje finalną ścieżkę do pliku
 def prepare_path(katalog: Path = ""):
-    return convert_path(katalog) / 'Dane.csv'
+    return os.path.join(convert_path(katalog), 'Dane.csv');
 
-#domyślny katalog odczytu to katalog, w którym znajduje sie plik
+#domyślny katalog odczytu to katalog wyjsciowy
 #jeżeli Model != 'A' tp funkcja zwraca 0 (nie sumujemy Czasu)
 #w przeciwnym wypadku zwraca warotść czas
-def read_csv(katalog: Path = ""):
-    pom = prepare_path(katalog)
-    with open(pom, 'r') as plik:
+def read_csv(odczyt):
+    with open(odczyt, 'r') as plik:
         czytelnik = csv.reader(plik)
 
         j = 0
         for wiersz in czytelnik:
             j = j + 1
-
             if(j == 2): # odczytujemy drugi wiersz
                 #odczytanie wartości wraz z obsługą błędów
                 if(len(wiersz) < 3):
                     # za mało kolumn
-                    print("Błąd odczytu", file=sys.stderr)
+                    print("Błąd odczytu1", file=sys.stderr)
+                    return 0
 
                 if (wiersz[0] == 'A'):
                     try:
                         wynik = int(wiersz[2])
                     except (ValueError, TypeError):
                         #typ niedający się przekonwertować na int
-                        print("Błąd odczytu", file=sys.stderr)
+                        print("Błąd odczytu2", file=sys.stderr)
                         return 0
                     return wynik
                 else:
@@ -67,17 +68,24 @@ def read_csv(katalog: Path = ""):
                     return 0
 
         #za mało wierszy
-        print("Błąd odczytu", file=sys.stderr)
+        print("Błąd odczytu3", file=sys.stderr)
         return 0
 
-#funkcja zakłada
+#funkcja zakłada, że znajdujemy sie we właściwym katalogu
 def read_all_csv():
-    pass
+    #wyszukujemy wszystkie pliki
+    pom = os.path.join(os.getcwd(), '**', 'Dane.csv');
 
+    #sumujemy
+    suma = 0
+    for plik in glob.glob(pom, recursive = True):
+        plik = Path(plik);
+        suma += read_csv(plik)
+    return suma
 
 #tworzenie nowego pliku, wyznaczenie i wpisanie danych
 #katalog - ścieżka do katalogu, w którym tworzymy plik Dane.csv
-#domyślnie tworzymy plik w katalogu, w którym znajduje sie plik
+#domyślnie tworzymy plik w katalogu wyjściowum
 def write_csv(katalog: Path = ""):
     pom = prepare_path(katalog)
 
@@ -189,8 +197,8 @@ if __name__ == '__main__':
 
 
     args = parse_args()
-    print(args) # DEBUG
-    write_csv()
-    print(read_csv())
+    #print(args) # DEBUG
+    write_csv() #DEBUG
+    print(read_all_csv()) #DEBUG
 
     #my tests
