@@ -24,27 +24,39 @@ VALUES_MODEL = ['A', 'B', 'C']
 VALUES_START = 0
 VALUES_FINISH = 1000
 
+#domyślny katalog odczytu to katalog wyjściowy
+#jeżeli Model != 'A' tp funkcja zwraca 0 (nie sumujemy Czasu)
+#w przeciwnym wypadku zwraca warotść czas
 def read_csv(katalog: Path = ""):
     katalog = Path(katalog)
     pom = katalog / 'Dane.csv'
     print(pom)
     with open(pom, 'r') as plik:
         czytelnik = csv.reader(plik)
+
         j = 0
         for wiersz in czytelnik:
             j = j + 1
-            if(j == 2):
+
+            if(j == 2): # odczytujemy drugi wiersz
+                #odczytanie wartości wraz z obsługą błędów
                 if(len(wiersz) < 3):
+                    # za mało kolumn
                     print("Błąd odczytu", file=sys.stderr)
+
                 if (wiersz[0] == 'A'):
                     try:
                         wynik = int(wiersz[2])
                     except (ValueError, TypeError):
+                        #typ niedający się przekonwertować na int
                         print("Błąd odczytu", file=sys.stderr)
                         return 0
-                    return int(wiersz[2])
+                    return wynik
                 else:
+                    #model różny od 'A'
                     return 0
+
+        #za mało wierszy
         print("Błąd odczytu", file=sys.stderr)
         return 0
 
@@ -60,11 +72,16 @@ def write_csv(katalog: Path = ""):
     #jeżeli plik Dane.csv już istnieje, to go nadpisujemy
     katalog = Path(katalog)
     pom = katalog / 'Dane.csv'
+
     with open(pom, 'w', newline ='') as plik:
         pisarz = csv.writer(plik)
+
+        #losowanie wartości
         model = random.choice(VALUES_MODEL)
         wynik = random.randint(VALUES_START, VALUES_FINISH)
         czas= random.randint(VALUES_START, VALUES_FINISH)
+
+        #zapis do pliku
         pisarz.writerow(HEADLINE)
         pisarz.writerow([model,wynik, czas])
 
@@ -164,7 +181,7 @@ if __name__ == '__main__':
 
     args = parse_args()
     print(args) # DEBUG
-    #write_csv()
+    write_csv()
     print(read_csv())
 
     #my tests
