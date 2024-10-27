@@ -23,8 +23,22 @@ VALUES_MODEL = ['A', 'B', 'C']
 VALUES_START = 0
 VALUES_FINISH = 1000
 
-def read_csv():
+def read_csv(katalog: Path = ""):
+    katalog = Path(katalog)
+    pom = katalog / 'Dane.csv'
+    print(pom)
+    with open(pom, 'r') as plik:
+        czytelnik = csv.reader(plik)
+        next(czytelnik);
+        wiersz = next(czytelnik)
+        if(wiersz[0] == 'A'):
+            return wiersz[2]
+        else:
+            return 0;
+
+def read_all_csv():
     pass
+
 
 #tworzenie nowego pliku, wyznaczenie i wpisanie danych
 #katalog - ścieżka do katalogu, w którym tworzymy plik Dane.csv
@@ -33,7 +47,6 @@ def write_csv(katalog: Path = ""):
     #jeżeli plik Dane.csv już istnieje, to go nadpisujemy
     katalog = Path(katalog)
     pom = katalog / 'Dane.csv'
-    print(pom)
     with open(pom, 'w', newline ='') as plik:
         pisarz = csv.writer(plik)
         model = random.choice(VALUES_MODEL)
@@ -138,6 +151,7 @@ if __name__ == '__main__':
 
     args = parse_args()
     print(args) # DEBUG
-    write_csv("test");
+    write_csv()
+    print(read_csv())
 
     #my tests
