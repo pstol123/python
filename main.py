@@ -26,15 +26,22 @@ VALUES_FINISH = 1000
 def read_csv():
     pass
 
-def write_csv():
-
-    with open('Dane.csv', 'w', newline ='') as plik:
+#tworzenie nowego pliku, wyznaczenie i wpisanie danych
+#katalog - ścieżka do katalogu, w którym tworzymy plik Dane.csv
+#domyślnie tworzymy plik w katalogu, w którym jesteśmy
+def write_csv(katalog: Path = ""):
+    #jeżeli plik Dane.csv już istnieje, to go nadpisujemy
+    katalog = Path(katalog)
+    pom = katalog / 'Dane.csv'
+    print(pom)
+    with open(pom, 'w', newline ='') as plik:
         pisarz = csv.writer(plik)
         model = random.choice(VALUES_MODEL)
         wynik = random.randint(VALUES_START, VALUES_FINISH)
         czas= random.randint(VALUES_START, VALUES_FINISH)
-        pisarz.writerow(HEADLINE);
-        pisarz.write([model,wynik, czas])
+        pisarz.writerow(HEADLINE)
+        pisarz.writerow([model,wynik, czas])
+
 def parse_args():
     pass
 
@@ -131,6 +138,6 @@ if __name__ == '__main__':
 
     args = parse_args()
     print(args) # DEBUG
-    write_csv();
+    write_csv("test");
 
     #my tests
