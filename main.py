@@ -27,10 +27,16 @@ VALUES_FINISH = 1000
 #domyślny katalog odczytu to katalog wyjściowy
 #jeżeli Model != 'A' tp funkcja zwraca 0 (nie sumujemy Czasu)
 #w przeciwnym wypadku zwraca warotść czas
-def read_csv(katalog: Path = ""):
+def convert_path(katalog: Path = ""):
     katalog = Path(katalog)
+    if (not katalog.is_dir()):
+        print("Błędna ścieżka", file=sys.stderr);
+        return;
     pom = katalog / 'Dane.csv'
-    print(pom)
+    return pom;
+
+def read_csv(katalog: Path = ""):
+    pom = convert_path(katalog);
     with open(pom, 'r') as plik:
         czytelnik = csv.reader(plik)
 
@@ -69,10 +75,9 @@ def read_all_csv():
 #katalog - ścieżka do katalogu, w którym tworzymy plik Dane.csv
 #domyślnie tworzymy plik w katalogu, w którym jesteśmy
 def write_csv(katalog: Path = ""):
-    #jeżeli plik Dane.csv już istnieje, to go nadpisujemy
-    katalog = Path(katalog)
-    pom = katalog / 'Dane.csv'
+    pom = convert_path(katalog);
 
+    # jeżeli plik Dane.csv już istnieje, to go nadpisujemy
     with open(pom, 'w', newline ='') as plik:
         pisarz = csv.writer(plik)
 
