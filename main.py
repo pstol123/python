@@ -1,4 +1,7 @@
 import argparse
+import csv
+import random
+from pathlib import Path
 
 MONTHS = {
     "Jan": "January", "Feb": "February", "Mar": "March", "Apr": "April", "May": "May", "Jun": "June",
@@ -18,8 +21,16 @@ def read_csv():
     pass
 
 def write_csv():
-    pass
-    #testtesttes
+    HEADLINE = 'Model;    Wynik;    Czas;'
+    VALUES_MODEL = ['A', 'B', 'C']
+    VALUES_START = 0
+    VALUES_FINISH = 1000
+    with open('Dane.csv', 'r', newline ='') as plik:
+        pisarz = csv.writer
+        model = random.choice(VALUES_MODEL)
+        wynik = randint(VALUES_START, VALUES_FINISH)
+        czas= randint(VALUES_START, VALUES_FINISH)
+        pisarz.write(
 def parse_args():
     pass
 
