@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 import glob
 import os
+import json
 
 MONTHS = {
     "Jan": "January", "Feb": "February", "Mar": "March", "Apr": "April", "May": "May", "Jun": "June",
@@ -228,18 +229,55 @@ def generate_paths_and_files(args):
                     print(read_all_csv(complete_path))
 
 
+# Funkcje pomocnicze dla JSON do zapisu i odczytu w strukturze 
 
 def write_json(directory: Path):
-    pass
+    """
+    Zapisuje plik JSON w podanym katalogu.
+    """
+    file_path = directory / "Data.json"
+    
+    data = {
+        "Model": random.choice(VALUES_MODEL),
+        "Wynik": random.randint(VALUES_START, VALUES_FINISH),
+        "Czas": random.randint(VALUES_START, VALUES_FINISH)
+    }
+    
+    # Tworzenie katalogu i zapis do pliku JSON
+    directory.mkdir(parents=True, exist_ok=True)
+    with open(file_path, 'w') as json_file:
+        json.dump(data, json_file)
 
 
 def read_json(file_path: Path):
-    pass
+    """
+    Odczytuje dane z pliku JSON i zwraca czas przetwarzania jeśli model to 'A'.
+    """
+    try:
+        with open(file_path, 'r') as json_file:
+            data = json.load(json_file)
+            # Sprawdzamy czy model to 'A' i zwracamy 'Czas', jeśli dane są poprawne
+            # Jeśli plik ma błędny format, zwraca 0.
+            if data.get("Model") == 'A':
+                return int(data.get("Czas", 0))
+            return 0
+    except (json.JSONDecodeError, KeyError, ValueError, TypeError):
+        # Zwracamy 0 w przypadku błędnego formatu pliku lub innych błędów odczytu
+        print(f"Błąd odczytu pliku JSON: {file_path}", file=sys.stderr)
+        return 0
 
 
 def read_all_json(root_path: Path):
-    pass
-
+    """
+    Przeszukuje wszystkie pliki Dane.json w katalogach podrzędnych, 
+    sumuje wartości Czas dla plików, gdzie Model jest 'A'
+    """
+    total_time = 0
+    # Wyszukiwanie wszystkich plików JSON w podkatalogach
+    for file_path in root_path.rglob("Dane.json"):
+        total_time += read_json(file_path)
+    return total_time
+    
 
 if __name__ == '__main__':
 
