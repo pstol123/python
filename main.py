@@ -193,10 +193,59 @@ def parse_args():
 
     return params
 
+# Funkcja generująca ścieżki oraz tworząca/odczytująca pliki
+def generate_paths_and_files(args):
+    """
+    Generuje strukturę katalogów na podstawie miesięcy, dni i pory dnia.
+    Tworzy lub odczytuje pliki w tych ścieżkach zgodnie z parametrami.
+    """
+    for i, month in enumerate(args.months):
+        month_dir = Path(month)  # Tworzymy ścieżkę katalogu dla każdego miesiąca
+        day_range = args.days[i]  # Pobieramy zakres dni dla danego miesiąca
+
+        for j, day in enumerate(day_range):  # Iterujemy przez dni w każdym miesiącu
+            # Określamy porę dnia, domyślnie "rano" jeśli nie jest podana
+            time_of_day = args.times[j] if args.times and j < len(args.times) else "r"
+            time_folder = TIMES.get(time_of_day, "rano")  # "r" = rano, "w" = wieczor
+
+            # Budujemy kompletną ścieżkę: Miesiąc/Dzień/Pora_dnia
+            complete_path = month_dir / DAYS[day] / time_folder
+
+            if args.create:
+                # Jeśli podano --create, tworzymy katalogi i pliki
+                complete_path.mkdir(parents=True, exist_ok=True)  # Tworzymy katalog jeśli nie istnieje
+                if args.json:
+                    # Tworzenie pliku JSON
+                    write_json(complete_path)
+                else:
+                    # Tworzenie pliku CSV
+                    write_csv(complete_path)
+            else:
+                # Jeśli tryb odczytu, odczytujemy pliki w zadanych ścieżkach
+                if args.json:
+                    print(read_all_json(complete_path))
+                else:
+                    print(read_all_csv(complete_path))
+
+
+
+def write_json(directory: Path):
+    pass
+
+
+def read_json(file_path: Path):
+    pass
+
+
+def read_all_json(root_path: Path):
+    pass
+
+
 if __name__ == '__main__':
 
 
     args = parse_args()
+    generate_paths_and_files(args)
     #print(args) # DEBUG
     write_csv() #DEBUG
     print(read_all_csv()) #DEBUG
