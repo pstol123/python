@@ -35,7 +35,7 @@ For each specified combination of month, day, and time, the script generates an 
   - Implemented generating directory paths.
   - Delegating creating/reading data files at those paths to other functions.
 - **Person 3 (Piotr Stolarczyk):**
-  - Implemented CSV file writing and reading.
+  - Implemented CSV file writing and reading logic.
   - Creation and management of the GitHub repository.
 - **Person 4 (Antoni Sierka):**
-  - Implemented JSON file writing and reading.
+  - Implemented JSON file writing and reading logic.
