@@ -1,11 +1,11 @@
 import argparse
 import csv
-import random
-from pathlib import Path
-import sys
-import glob
-import os
 import json
+import os
+import random
+import sys
+from pathlib import Path
+
 
 MONTHS = {
     "Jan": "January", "Feb": "February", "Mar": "March", "Apr": "April", "May": "May", "Jun": "June",
@@ -21,89 +21,96 @@ TIMES = {
     "m": "morning", "e": "evening"
 }
 
-#stałe do zapisu Dane.csv
+
+#stałe do zapisu Data.csv i Data.json
 HEADLINE = ['Model', 'Wynik', 'Czas']
 VALUES_MODEL = ['A', 'B', 'C']
 VALUES_START = 0
 VALUES_FINISH = 1000
 
+
 #konweruje i sprawdza poprawność ścieżki
-def convert_path(katalog: Path = ""):
-    if (not katalog.is_dir() or not katalog.exists()):
+def convert_path(katalog: Path):
+    if not katalog.is_dir() or not katalog.exists():
         print("Błędna ścieżka", file=sys.stderr)
-        return
+        return None
     return katalog
 
+
 #przygotowuje finalną ścieżkę do pliku
-def prepare_path(katalog: Path = ""):
-    return os.path.join(convert_path(katalog), 'Dane.csv');
+def prepare_path(katalog: Path):
+    katalog = convert_path(katalog)
+    if katalog is None:
+        return None
+    return os.path.join(katalog, 'Data.csv')
 
-#domyślny katalog odczytu to katalog wyjsciowy
-#jeżeli Model != 'A' tp funkcja zwraca 0 (nie sumujemy Czasu)
-#w przeciwnym wypadku zwraca warotść czas
+
+#domyślny katalog odczytu to katalog wyjściowy
+#jeżeli Model != 'A' to funkcja zwraca 0 (nie sumujemy Czasu)
+#w przeciwnym wypadku zwraca wartość czas
 def read_csv(odczyt):
-    with open(odczyt, 'r') as plik:
-        czytelnik = csv.reader(plik)
+    print(odczyt)
+    try:
+        with open(odczyt, 'r') as plik:
+            czytelnik = csv.reader(plik)
 
-        j = 0
-        for wiersz in czytelnik:
-            j = j + 1
-            if(j == 2): # odczytujemy drugi wiersz
-                #odczytanie wartości wraz z obsługą błędów
-                if(len(wiersz) < 3):
-                    # za mało kolumn
-                    print("Błąd odczytu1", file=sys.stderr)
-                    return 0
-
-                if (wiersz[0] == 'A'):
-                    try:
-                        wynik = int(wiersz[2])
-                    except (ValueError, TypeError):
-                        #typ niedający się przekonwertować na int
-                        print("Błąd odczytu2", file=sys.stderr)
+            j = 0
+            for wiersz in czytelnik:
+                j = j + 1
+                if j == 2:  # odczytujemy drugi wiersz
+                    #odczytanie wartości wraz z obsługą błędów
+                    if len(wiersz) < 3:
+                        # za mało kolumn
+                        print("Błąd odczytu", file=sys.stderr)
                         return 0
-                    return wynik
-                else:
-                    #model różny od 'A'
-                    return 0
 
-        #za mało wierszy
-        print("Błąd odczytu3", file=sys.stderr)
+                    if wiersz[0] == 'A':
+                        try:
+                            wynik = int(wiersz[2])
+                        except (ValueError, TypeError):
+                            #typ niedający się przekonwertować na int
+                            print("Błąd odczytu", file=sys.stderr)
+                            return 0
+                        return wynik
+                    else:
+                        #model różny od 'A'
+                        return 0
+
+            #za mało wierszy
+            print("Błąd odczytu", file=sys.stderr)
+            return 0
+    except FileNotFoundError:
+        print("Błąd: Plik nie istnieje", file=sys.stderr)
         return 0
 
-#funkcja zakłada, że znajdujemy sie we właściwym katalogu
-def read_all_csv():
-    #wyszukujemy wszystkie pliki
-    pom = os.path.join(os.getcwd(), '**', 'Dane.csv');
 
-    #sumujemy
-    suma = 0
-    for plik in glob.glob(pom, recursive = True):
-        plik = Path(plik);
-        suma += read_csv(plik)
-    return suma
+def read_file_csv(katalog: Path):
+    katalog = prepare_path(katalog)
+    if katalog is None:
+        return 0
+    return read_csv(katalog)
+
 
 #tworzenie nowego pliku, wyznaczenie i wpisanie danych
-#katalog - ścieżka do katalogu, w którym tworzymy plik Dane.csv
-#domyślnie tworzymy plik w katalogu wyjściowum
-def write_csv(katalog: Path = ""):
-    pom = prepare_path(katalog)
+#katalog - ścieżka do katalogu, w którym tworzymy plik Data.csv
+#domyślnie tworzymy plik w katalogu wyjściowym
+def write_csv(katalog: Path):
+    pom = katalog / "Data.csv"
+    katalog.mkdir(parents=True, exist_ok=True)
 
-    # jeżeli plik Dane.csv już istnieje, to go nadpisujemy
-    with open(pom, 'w', newline ='') as plik:
+    # jeżeli plik Data.csv już istnieje, to go nadpisujemy
+    with open(pom, 'w', newline='') as plik:
         pisarz = csv.writer(plik)
 
         #losowanie wartości
         model = random.choice(VALUES_MODEL)
         wynik = random.randint(VALUES_START, VALUES_FINISH)
-        czas= random.randint(VALUES_START, VALUES_FINISH)
+        czas = random.randint(VALUES_START, VALUES_FINISH)
 
         #zapis do pliku
         pisarz.writerow(HEADLINE)
-        pisarz.writerow([model,wynik, czas])
+        pisarz.writerow([model, wynik, czas])
 
-def parse_args():
-    pass
 
 def parse_day_range(parser: argparse.ArgumentParser, range_str: str) -> list[str]:
     """
@@ -193,20 +200,23 @@ def parse_args():
 
     return params
 
+
 # Funkcja generująca ścieżki oraz tworząca/odczytująca pliki
 def generate_paths_and_files(args):
     """
     Generuje strukturę katalogów na podstawie miesięcy, dni i pory dnia.
     Tworzy lub odczytuje pliki w tych ścieżkach zgodnie z parametrami.
     """
+    time_index = 0
+    suma = 0
     for i, month in enumerate(args.months):
-        month_dir = Path(month)  # Tworzymy ścieżkę katalogu dla każdego miesiąca
+        month_dir = Path(MONTHS[month])  # Tworzymy ścieżkę katalogu dla każdego miesiąca
         day_range = args.days[i]  # Pobieramy zakres dni dla danego miesiąca
 
-        for j, day in enumerate(day_range):  # Iterujemy przez dni w każdym miesiącu
-            # Określamy porę dnia, domyślnie "rano" jeśli nie jest podana
-            time_of_day = args.times[j] if args.times and j < len(args.times) else "r"
-            time_folder = TIMES.get(time_of_day, "rano")  # "r" = rano, "w" = wieczor
+        for day in day_range:  # Iterujemy przez dni w każdym miesiącu
+            # Określamy porę dnia, domyślnie "morning" jeśli nie jest podana
+            time_of_day = args.times[time_index] if args.times and time_index < len(args.times) else "m"
+            time_folder = TIMES.get(time_of_day, "morning")  # "m" = morning, "e" = evening
 
             # Budujemy kompletną ścieżkę: Miesiąc/Dzień/Pora_dnia
             complete_path = month_dir / DAYS[day] / time_folder
@@ -223,9 +233,14 @@ def generate_paths_and_files(args):
             else:
                 # Jeśli tryb odczytu, odczytujemy pliki w zadanych ścieżkach
                 if args.json:
-                    print(read_all_json(complete_path))
+                    suma += read_file_json(complete_path)
                 else:
-                    print(read_all_csv(complete_path))
+                    suma += read_file_csv(complete_path)
+
+            time_index += 1
+
+    if not args.create:
+        print("Suma:", suma)
 
 
 # Funkcje pomocnicze dla JSON do zapisu i odczytu w strukturze 
@@ -235,13 +250,13 @@ def write_json(directory: Path):
     Zapisuje plik JSON w podanym katalogu.
     """
     file_path = directory / "Data.json"
-    
+
     data = {
         "Model": random.choice(VALUES_MODEL),
         "Wynik": random.randint(VALUES_START, VALUES_FINISH),
         "Czas": random.randint(VALUES_START, VALUES_FINISH)
     }
-    
+
     # Tworzenie katalogu i zapis do pliku JSON
     directory.mkdir(parents=True, exist_ok=True)
     with open(file_path, 'w') as json_file:
@@ -260,31 +275,21 @@ def read_json(file_path: Path):
             if data.get("Model") == 'A':
                 return int(data.get("Czas", 0))
             return 0
-    except (json.JSONDecodeError, KeyError, ValueError, TypeError):
+    except (json.JSONDecodeError, KeyError, ValueError, TypeError, FileNotFoundError):
         # Zwracamy 0 w przypadku błędnego formatu pliku lub innych błędów odczytu
         print(f"Błąd odczytu pliku JSON: {file_path}", file=sys.stderr)
         return 0
 
 
-def read_all_json(root_path: Path):
+def read_file_json(root_path: Path):
     """
-    Przeszukuje wszystkie pliki Dane.json w katalogach podrzędnych, 
+    Przeszukuje wszystkie pliki Data.json w katalogach podrzędnych,
     sumuje wartości Czas dla plików, gdzie Model jest 'A'
     """
-    total_time = 0
-    # Wyszukiwanie wszystkich plików JSON w podkatalogach
-    for file_path in root_path.rglob("Dane.json"):
-        total_time += read_json(file_path)
-    return total_time
-    
+    file_path = root_path / "Data.json"
+    return read_json(file_path)
+
 
 if __name__ == '__main__':
-
-
-    args = parse_args()
-    generate_paths_and_files(args)
-    #print(args) # DEBUG
-    write_csv() #DEBUG
-    print(read_all_csv()) #DEBUG
-
-    #my tests
+    my_args = parse_args()
+    generate_paths_and_files(my_args)
