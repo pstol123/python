@@ -10,14 +10,14 @@ The script operates on a nested directory structure with four levels:
 3. **Level 3:** Subdirectories representing **morning/evening**.
 4. **Level 4:** Actual **data files** in CSV or JSON format.
 
-The user is be able to specify:
+The user is able to specify:
 - **Months:** Choose one or more months.
 - **Days:** Define a range of days for each month.
-- **Time of Day:** Specify either morning or evening (default is morning).
+- **Time of Day:** Specify either morning or evening (morning is default).
 - **Operation Mode:** Create or read data files, depending on the given parameters.
 - **File Format:** Choose between CSV and JSON.
 
-For each specified combination of month, day, and time, the script generates an appropriate directory structure and create data files if required.
+For each specified combination of month, day, and time, the script generates an appropriate directory structure and reads/creates data files.
 
 ### Options
 
