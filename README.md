@@ -22,7 +22,7 @@ The user is able to specify:
 For each specified combination of month, day, and time, the script generates an appropriate directory structure and reads/creates data files.
 
 ### Example Use
-`python3 main.py --months Jan Mar Feb --days Mon-Wed Fri Tue-Sat --times m m e --create`
+`python3 main.py --months Jan Mar Feb --days Mon-Wed Fri Tue-Sat --times m m e m e --create`
 
 ### Division of Responsibilities
 - **Person 1 (Wiktor Kotala):**
