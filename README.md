@@ -31,11 +31,11 @@ For each specified combination of month, day, and time, the script generates an 
 - **Person 1 (Wiktor Kotala):**
   - Implemented script-level logic, handling parameters using the `argparse` library.
   - Helped with debugging and synchronization of individual functions.
-- **Person 2 ():**
+- **Person 2 (Tymoteusz Ziarek):**
   - Implemented generating directory paths.
   - Delegating creating/reading data files at those paths to other functions.
 - **Person 3 (Piotr Stolarczyk):**
   - Implemented CSV file writing and reading.
   - Created and managed the GitHub repository.
-- **Person 4 ():**
+- **Person 4 (Antoni Sierka):**
   - Implemented JSON file writing and reading.
