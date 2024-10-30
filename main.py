@@ -49,7 +49,6 @@ def prepare_path(katalog: Path):
 #jeżeli Model != 'A' to funkcja zwraca 0 (nie sumujemy Czasu)
 #w przeciwnym wypadku zwraca wartość czas
 def read_csv(odczyt):
-    print(odczyt)
     try:
         with open(odczyt, 'r') as plik:
             czytelnik = csv.reader(plik)
