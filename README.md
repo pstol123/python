@@ -26,7 +26,7 @@ For each specified combination of month, day, and time, the script generates an 
 
 ### Division of Responsibilities
 - **Person 1 (Wiktor Kotala):**
-  - Implementation of script-level logic, handling **parameters**.
+  - Implementation of script-level logic, handling **parameters** using `argparse` library.
   - Debugging and synchronization of individual functions.
 - **Person 2 (Tymoteusz Ziarek):**
   - Generating **directory paths**.
