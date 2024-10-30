@@ -29,7 +29,6 @@ VALUES_FINISH = 1000
 
 #konweruje i sprawdza poprawność ścieżki
 def convert_path(katalog: Path = ""):
-    katalog = Path(katalog)
     if (not katalog.is_dir() or not katalog.exists()):
         print("Błędna ścieżka", file=sys.stderr)
         return
