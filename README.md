@@ -32,7 +32,8 @@ For each specified combination of month, day, and time, the script generates an 
   - Implemented script-level logic, handling parameters using the `argparse` library.
   - Helped with debugging and synchronization of individual functions.
 - **Person 2 ():**
-  - Implemented generating directory paths and delegating creating/reading data files at those paths.
+  - Implemented generating directory paths.
+  - Delegating creating/reading data files at those paths to other functions.
 - **Person 3 (Piotr Stolarczyk):**
   - Implemented CSV file writing and reading.
   - Created and managed the GitHub repository.
